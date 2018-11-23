@@ -1,14 +1,20 @@
 var myGamePiece;
 var myObstacles = [];
+var myScore;
+var myBackground;
 
 function startGame() {
     
-    myGamePiece = new component(75,75,"red",10,10);
-    myGameArea.start();
+    myGamePiece = new component(30,30,"black",10,10);
+    myScore = new component("30px", "Consolas","black",280,40,"text");
     //myObstacle = new component(10,200,"green",300,120);
+    myBackground = new component(656,270,"abstract-curves-led-1944.jpg",0,0,"image");
+    myGameArea.start();
+    
 }
 
-function component(width, height, color, x, y) {
+function component(width, height, color, x, y, type) {
+    this.type = type;
     this.width = width;
     this.height = height;
     this.speedX = 0;
@@ -16,9 +22,15 @@ function component(width, height, color, x, y) {
     this.x = x;
     this.y = y; 
     this.update = function() {
-        ctx = myGameArea.context;
+      ctx = myGameArea.context;
+      if (this.type == "text") {
+        ctx.font = this.width + " " + this.height;
+        ctx.fillStyle = color;
+        ctx.fillText(this.text, this.x, this.y);
+      } else {
         ctx.fillStyle = color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+      }
     }
     this.newPos = function() {
         this.x += this.speedX;
@@ -99,6 +111,8 @@ function updateGameArea() {
         } 
     }
     myGameArea.clear();
+    myBackground.newPos();
+    myBackground.update();
     myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(150)) {
         x = myGameArea.canvas.width;
@@ -116,6 +130,8 @@ function updateGameArea() {
         myObstacles[i].x += -1;
         myObstacles[i].update();
     }
+    myScore.text="SCORE: "+ myGameArea.frameNo;
+    myScore.update();
     myGamePiece.newPos(); 
     myGamePiece.update();
 }
